@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javascript Web Output #1</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 14px;
+            font-size: 18px;
+        }
+
+        h1 {
+            font-size: 32px;
+        }
+
+        input {
+            width: 175px;
+            height: 22px;
+            font-size: 16px;
+        }
+
+        button,
+        select {
+            font-size: 16px;
+            padding: 2px 7px;
+            margin-right: 4px;
+        }
+
+        fieldset {
+            min-height: 250px;
+            margin-top: 30px;
+        }
+
+        legend {
+            font-size: 20px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .number {
+            width: 90px;
+        }
+
+        .type {
+            width: 90px;
+        }
+
+        .odd {
+            color: blue;
+        }
+
+        .even {
+            color: green;
+        }
+
+        .result {
+            margin: 12px 0;
+        }
+
+        .highlight {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Javascript Web Output #1</h1>
+
+    <label>Insert any Positive Numbers:</label>
+    <input type="number" id="numberInput">
+
+    <br>
+
+    <button onclick="insertNumber()">Insert</button>
+    <button onclick="clearEntry()">Clear Entry</button>
+
+    <fieldset>
+        <legend>Inserted Numbers</legend>
+
+        <div id="numberList"></div>
+
+        <div id="results"></div>
+    </fieldset>
+
+    <br>
+
+    <button onclick="clearItems()">Clear Items</button>
+    <button onclick="getTotal()">Get Total</button>
+    <button onclick="identifyHighestLowest()">
+        Identify Highest and Lowest Number
+    </button>
+
+    <label>Sort by:</label>
+
+    <select id="sortSelect" onchange="sortNumbers()">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+    </select>
+
+    <script>
+        let numbers = [];
+
+        function insertNumber() {
+            let input = document.getElementById("numberInput");
+            let value = Number(input.value);
+
+            if (value <= 0 || input.value === "") {
+                alert("Please enter a positive number.");
+                return;
+            }
+
+            numbers.push(value);
+            input.value = "";
+
+            displayNumbers();
+        }
+
+        function displayNumbers() {
+            let list = document.getElementById("numberList");
+
+            list.innerHTML = "";
+
+            numbers.forEach((num, index) => {
+                let item = document.createElement("div");
+                item.className = "item";
+
+                let number = document.createElement("span");
+                number.className = "number";
+                number.textContent = num;
+
+                let type = document.createElement("span");
+
+                if (num % 2 === 0) {
+                    type.textContent = "EVEN";
+                    type.className = "type even";
+                } else {
+                    type.textContent = "ODD";
+                    type.className = "type odd";
+                }
+
+                let removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+
+                removeButton.onclick = function () {
+                    numbers.splice(index, 1);
+                    displayNumbers();
+                };
+
+                let editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+
+                editButton.onclick = function () {
+                    let newValue = prompt(
+                        "Enter new positive number:",
+                        num
+                    );
+
+                    if (
+                        newValue !== null &&
+                        newValue !== "" &&
+                        Number(newValue) > 0
+                    ) {
+                        numbers[index] = Number(newValue);
+                        displayNumbers();
+                    }
+                };
+
+                item.appendChild(number);
+                item.appendChild(type);
+                item.appendChild(removeButton);
+                item.appendChild(editButton);
+
+                list.appendChild(item);
+            });
+        }
+
+        function clearEntry() {
+            document.getElementById("numberInput").value = "";
+        }
+
+        function clearItems() {
+            numbers = [];
+
+            document.getElementById("numberList").innerHTML = "";
+            document.getElementById("results").innerHTML = "";
+        }
+
+        function getTotal() {
+            if (numbers.length === 0) {
+                return;
+            }
+
+            let total = numbers.reduce(
+                (sum, number) => sum + number,
+                0
+            );
+
+            document.getElementById("results").innerHTML =
+                "<div class='result'><b>TOTAL</b> " +
+                "<span class='highlight'>" +
+                total +
+                "</span></div>";
+        }
+
+        function identifyHighestLowest() {
+            if (numbers.length === 0) {
+                return;
+            }
+
+            let highest = Math.max(...numbers);
+            let lowest = Math.min(...numbers);
+
+            let total = numbers.reduce(
+                (sum, number) => sum + number,
+                0
+            );
+
+            document.getElementById("results").innerHTML =
+                "<div class='result'>" +
+                "<b>HIGHEST</b> " +
+                "<span class='highlight'>" +
+                highest +
+                "</span>" +
+                "</div>" +
+
+                "<div class='result'>" +
+                "<b>LOWEST</b> " +
+                "<span class='highlight'>" +
+                lowest +
+                "</span>" +
+                "</div>" +
+
+                "<div class='result'>" +
+                "<b>TOTAL</b> " +
+                "<span class='highlight'>" +
+                total +
+                "</span>" +
+                "</div>";
+        }
+
+        function sortNumbers() {
+            let sortType =
+                document.getElementById("sortSelect").value;
+
+            if (sortType === "asc") {
+                numbers.sort(function (a, b) {
+                    return a - b;
+                });
+            } else {
+                numbers.sort(function (a, b) {
+                    return b - a;
+                });
+            }
+
+            displayNumbers();
+        }
+    </script>
+
+</body>
+</html>
